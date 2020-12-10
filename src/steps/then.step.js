@@ -26,6 +26,6 @@ Then(/^I see a duplicate email error message$/, function (){
 
 Then(/^I see a message confirming my account has been created$/, function (){
     browser.pause(3000)
-    OCregister.passwordMismatchErrorMessageVisible();
+    OCregister.registrationSuccessMessageIsVisible();
 })
 

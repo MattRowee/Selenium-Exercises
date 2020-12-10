@@ -27,7 +27,7 @@ class openCartRegisterPage extends Page {
     get passwordAlert () {return $('#input-password + .text-danger')}
     get passwordConfirmAlert () {return $('#input-confirm + .text-danger')}
     get emailDuplicateAlert () {return $('*[.fa-exclamation-circle][value="Warning: E-Mail Address is already registered!"]')}
-    get registrationSuccessMessage () {return $("h1 value='Your Account Has Been Created!'")}
+    get registrationSuccessMessage () {return $("h1=Your Account Has Been Created!")}
       //EMAIL ALERT MODALS
     // get emailModal () {return $()}
 
@@ -79,7 +79,6 @@ class openCartRegisterPage extends Page {
     inputPasswordConfirm(){
         this.passwordInput.setValue("Pass123");
         this.passConfirmInput.setValue("Pass123");
-        this.continueButton.click();
     }
     inputPasswordConfirmMismatch(){
         this.passwordInput.setValue("Pass123");
@@ -91,7 +90,7 @@ class openCartRegisterPage extends Page {
       browser.pause(2000);
       this.continueButton.click();
     }
-    
+
     clickPrivacyCB(){
       this.privacyCheckbox.click()
     }
