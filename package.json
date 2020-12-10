@@ -1,29 +1,9 @@
 {
-  "author": "Christian Bromann <christian@saucelabs.com>",
+  "author": "Rodrigo Berasain <rodriberasain@gmail.com>",
   "license": "MIT",
-  "name": "cucumber-boilerplate",
-  "version": "2.0.0",
-  "description": "Boilerplate project to run WebdriverIO tests with Cucumber",
-  "homepage": "https://github.com/webdriverio/cucumber-boilerplate",
-  "contributors": [
-    "W. van Kuipers <github@pwnd.nl>"
-  ],
-  "repository": {
-    "type": "git",
-    "getUrl": "https://github.com/webdriverio/cucumber-boilerplate.git"
-  },
-  "bugs": {
-    "getUrl": "https://github.com/webdriverio/cucumber-boilerplate/issues"
-  },
-  "keywords": [
-    "wdio",
-    "webdriver",
-    "webdriverio",
-    "cucumber",
-    "test",
-    "boilerplate",
-    "selenium"
-  ],
+  "name": "amazon-challenge",
+  "version": "1.0.0",
+  "description": "Amazon challenge",
   "scripts": {
     "clean": "read -p \"Are you sure you want to clean the project? [y/n] \" REPLY; if [[ $REPLY =~ ^[Yy]$ ]]; then rm -R .git .github demo-app test .codeclimate.yml .travis.yml jest.json wdio.BUILD.conf.js src/features/**; fi",
     "test": "run-s test:*",
@@ -48,16 +28,29 @@
     "@wdio/spec-reporter": "^6.0.8",
     "@wdio/static-server-service": "^6.0.8",
     "@wdio/sync": "^6.0.8",
+    "@wdio/allure-reporter": "^5.0.0",
     "babel-jest": "^26.0.1",
-    "chromedriver": "^85.0.1",
+    "allure-commandline": "^2.13.0",
     "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-chai-friendly": "^0.4.0",
+    "eslint-plugin-cucumber": "^1.4.0",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-wdio": "^6.0.8",
-    "http-server": "^0.12.1",
-    "jest": "^26.2.2",
+    "eslint-plugin-webdriverio": "^1.0.1",
     "npm-run-all": "^4.1.5",
     "wdio-chromedriver-service": "^6.0.3",
     "webdriverio": "^6.0.8"
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ]
+    ]
   }
 }

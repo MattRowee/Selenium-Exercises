@@ -1,6 +1,3 @@
-const path = require('path');
-const { hooks } = require('./src/support/hooks');
-
 exports.config = {
     //
     // ====================
@@ -26,6 +23,7 @@ exports.config = {
     exclude: [
         // 'path/to/excluded/files'
     ],
+    sync: true,
     //
     // ============
     // Capabilities
@@ -42,7 +40,7 @@ exports.config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 10,
+    maxInstances: 1,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
@@ -53,13 +51,21 @@ exports.config = {
         // maxInstances can get overwritten per capability. So if you have an in-house Selenium
         // grid with only 5 firefox instances available you can make sure that not more than
         // 5 instances get started at a time.
-        maxInstances: 5,
+        maxInstances: 1,
         //
         browserName: 'chrome',
         // If outputDir is provided WebdriverIO can capture driver session logs
         // it is possible to configure which logTypes to include/exclude.
         // excludeDriverLogs: ['*'], // pass '*' to exclude all driver session logs
         // excludeDriverLogs: ['bugreport', 'server'],
+        browserName: 'chrome',
+            'goog:chromeOptions': {
+                args: [ 
+                    'disable-infobars',
+                    'disable-popup-blocking',
+                    'disable-notifications' 
+                ]
+            },
     }],
     //
     // ===================
@@ -68,8 +74,7 @@ exports.config = {
     // Define all options that are relevant for the WebdriverIO instance here
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
-    logLevel: 'trace',
-    outputDir: path.join(__dirname, '/logs'),
+    logLevel: 'error',
     //
     // Set specific log levels per logger
     // loggers:
@@ -94,10 +99,13 @@ exports.config = {
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
-    baseUrl: 'http://localhost:8080',
+   
+   
+   //  baseUrl: 'https://www.aliexpress.com/',
+    baseUrl: 'https://demo.opencart.com/',
     //
     // Default timeout for all waitFor* commands.
-    waitforTimeout: 10000,
+    waitforTimeout: 30000,
     //
     // Default timeout in milliseconds for request
     // if browser driver or grid doesn't send response
@@ -119,6 +127,12 @@ exports.config = {
     // Make sure you have the wdio adapter package for the specific framework installed
     // before running any tests.
     framework: 'cucumber',
+
+    // Test runner services
+    // Services take over a specific job you don't want to take care of. They
+    // enhance your test setup with almost no effort. Unlike plugins, they don't
+    // add new commands. Instead, they hook themselves up into the test process.
+    services: ['selenium-standalone'],
     //
     // The number of times to retry the entire specfile when it fails as a whole
     // specFileRetries: 1,
@@ -129,7 +143,13 @@ exports.config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter.html
-    reporters: ['spec'],
+    reporters: ['spec', 'allure'],
+    reporterOptions: {
+        outputDir: 'report',
+        allure: {
+          outputDir: 'allure-results'
+        }
+      },
     //
     // If you are using Cucumber you need to specify the location of your step definitions.
     cucumberOpts: {
@@ -156,14 +176,7 @@ exports.config = {
         // <string[]> (name) specify the profile to use
         profile: [],
         // <string[]> (file/dir) require files before executing features
-        require: [
-            './src/steps/given.js',
-            './src/steps/then.js',
-            './src/steps/when.js',
-            // Or search a (sub)folder for JS files with a wildcard
-            // works since version 1.1 of the wdio-cucumber-framework
-            // './src/**/*.js',
-        ],
+        require: ['./src/steps/*.step.js'], 
         // <string> specify a custom snippet syntax
         snippetSyntax: undefined,
         // <boolean> fail if there are any undefined or pending steps
@@ -175,7 +188,149 @@ exports.config = {
         // <boolean> add cucumber tags to feature or scenario name
         tagsInTitle: false,
         // <number> timeout for step definitions
-        timeout: 20000,
+        timeout: 3 * 99999,
+        
     },
-    ...hooks,
+    // =====
+  // Hooks
+  // =====
+  // WebdriverIO provides several hooks you can use to interfere with the
+  // test process in order to enhance it and to build services around it.
+  // You can either apply a single function or an array of methods to it.
+  // If one of them returns with a promise, WebdriverIO will wait until
+  // that promise got resolved to continue.
+  /**
+     * Gets executed once before all workers get launched.
+     * @param {Object} config wdio configuration object
+     * @param {Array.<Object>} capabilities list of capabilities details
+     */
+  // onPrepare: function (config, capabilities) {
+  // },
+  /**
+     * Gets executed before a worker process is spawned and can be used to
+     * initialise specific service for that worker as well as modify runtime
+     * environments in an async fashion.
+     * @param  {String} cid      capability id (e.g 0-0)
+     * @param  {[type]} caps     object containing capabilities for session
+     *                           that will be spawn in the worker
+     * @param  {[type]} specs    specs to be run in the worker process
+     * @param  {[type]} args     object that will be merged with the main
+     *                           configuration once worker is initialised
+     * @param  {[type]} execArgv list of string arguments passed to the worker process
+     */
+  // onWorkerStart: function (cid, caps, specs, args, execArgv) {
+  // },
+  /**
+     * Gets executed just before initialising the webdriver session and test
+     * framework. It allows you to manipulate configurations depending on the
+     * capability or spec.
+     * @param {Object} config wdio configuration object
+     * @param {Array.<Object>} capabilities list of capabilities details
+     * @param {Array.<String>} specs List of spec file paths that are to be run
+     */
+  // beforeSession: function (config, capabilities, specs) {
+  // },
+  /**
+     * Gets executed before test execution begins. At this point you can access to all global
+     * variables like `browser`. It is the perfect place to define custom commands.
+     * @param {Array.<Object>} capabilities list of capabilities details
+     * @param {Array.<String>} specs List of spec file paths that are to be run
+     */
+  // eslint-disable-next-line no-unused-vars
+  before: function (capabilities, specs) {
+    /**
+     * Setup the Chai assertion framework
+     */
+    const chai = require('chai')
+
+    global.expect = chai.expect
+    global.assert = chai.assert
+    global.should = chai.should()
+
+    //Sets the Windows Size, this is needed for mobile version testing
+    browser.maximizeWindow()
+  },
+  /**
+     * Runs before a WebdriverIO command gets executed.
+     * @param {String} commandName hook command name
+     * @param {Array} args arguments that command would receive
+     */
+  // beforeCommand: function (commandName, args) {
+  // },
+  /**
+     * Runs before a Cucumber feature
+     */
+  // beforeFeature: function (uri, feature, scenarios) {
+  // },
+  /**
+     * Runs before a Cucumber scenario
+     */
+  // beforeScenario: function (uri, feature, scenario, sourceLocation) {
+  // },
+  /**
+     * Runs before a Cucumber step
+     */
+  // beforeStep: function ({ uri, feature, step }, context) {
+  // },
+  /**
+     * Runs after a Cucumber step
+     */
+  // eslint-disable-next-line no-unused-vars
+  //   afterStep: function ({ uri, feature, step }, context, { error, result, duration, passed, retries }) {   
+  //   },
+  /**
+     * Runs after a Cucumber scenario
+     */
+  // eslint-disable-next-line no-unused-vars
+  //   afterScenario: function (uri, feature, scenario, result, sourceLocation) {
+  //   },
+  /**
+     * Runs after a Cucumber feature
+     */
+  //afterFeature: function (uri, feature, scenarios) {
+  //},
+
+  /**
+     * Runs after a WebdriverIO command gets executed
+     * @param {String} commandName hook command name
+     * @param {Array} args arguments that command would receive
+     * @param {Number} result 0 - command success, 1 - command error
+     * @param {Object} error error object if any
+     */
+  // afterCommand: function (commandName, args, result, error) {
+  // },
+  /**
+     * Gets executed after all tests are done. You still have access to all global variables from
+     * the test.
+     * @param {Number} result 0 - test pass, 1 - test fail
+     * @param {Array.<Object>} capabilities list of capabilities details
+     * @param {Array.<String>} specs List of spec file paths that ran
+     */
+  // after: function (result, capabilities, specs) {
+  // },
+  /**
+     * Gets executed right after terminating the webdriver session.
+     * @param {Object} config wdio configuration object
+     * @param {Array.<Object>} capabilities list of capabilities details
+     * @param {Array.<String>} specs List of spec file paths that ran
+     */
+  // afterSession: function (config, capabilities, specs) {
+  // },
+  /**
+     * Gets executed after all workers got shut down and the process is about to exit. An error
+     * thrown in the onComplete hook will result in the test run failing.
+     * @param {Object} exitCode 0 - success, 1 - fail
+     * @param {Object} config wdio configuration object
+     * @param {Array.<Object>} capabilities list of capabilities details
+     * @param {<Object>} results object containing test results
+     */
+  // onComplete: function(exitCode, config, capabilities, results) {
+  // },
+  /**
+    * Gets executed when a refresh happens.
+    * @param {String} oldSessionId session ID of the old session
+    * @param {String} newSessionId session ID of the new session
+    */
+  // onReload: function(oldSessionId, newSessionId) {
+  // }
 };
